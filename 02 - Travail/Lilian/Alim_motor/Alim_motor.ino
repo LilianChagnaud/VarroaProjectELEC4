@@ -1,33 +1,27 @@
+#include <AccelStepper.h>
+
 #define dirPin 12    // nouvelle broche DIR
 #define stepPin 13   // nouvelle broche STEP
-#define enPin 21     // pin EN, forcée à GND
+
+AccelStepper stepper(AccelStepper::DRIVER, stepPin, dirPin);
 
 void setup() {
-  pinMode(stepPin, OUTPUT);
-  pinMode(dirPin, OUTPUT);
-  pinMode(enPin, OUTPUT);
-  
-  digitalWrite(enPin, LOW); // activer le driver en le mettant à GND
+  stepper.setMaxSpeed(10000);
+  stepper.setAcceleration(1000);
 }
 
 void loop() {
   // tourner dans une direction
-  digitalWrite(dirPin, HIGH);
-  for (int i = 0; i < 200; i++) {
-    digitalWrite(stepPin, HIGH);
-    delayMicroseconds(1000);
-    digitalWrite(stepPin, LOW);
-    delayMicroseconds(1000);
+  stepper.moveTo(200);
+  while(stepper.distanceToGo() != 0){
+    stepper.run();
   }
   delay(1000);
 
   // tourner dans l'autre direction
-  digitalWrite(dirPin, LOW);
-  for (int i = 0; i < 200; i++) {
-    digitalWrite(stepPin, HIGH);
-    delayMicroseconds(1000);
-    digitalWrite(stepPin, LOW);
-    delayMicroseconds(1000);
+  stepper.moveTo(-200);
+  while (stepper.distanceToGo() != 0) {
+    stepper.run();  // Avancer vers la position cible
   }
   delay(1000);
 }
